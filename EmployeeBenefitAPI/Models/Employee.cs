@@ -1,13 +1,18 @@
 namespace EmployeeBenefitAPI.Models
 {
-    public class Employee
+    public class Employee : Person
     {
-        public long Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public decimal? TotalBenefitCost { get; set; }
-        public decimal? EmployeeBenefitCost { get; set; }
-        public decimal? TotalDependentBenefitCost { get; set; }
+        public Guid Id { get; set; }
+        public bool IsActive { get; set; }
 
+        public decimal? BasePay { get; set; }
+
+        
+        BenefitCalculator benefitCalculator = new BenefitCalculator();
+
+        public Employee()
+        {
+            benefitCalculator.CoverageCost=1000;
+        }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using EmployeeBenefitAPI.Models;
+using EmployeeBenefitAPI.Data;
+using EmployeeBenefitAPI.Core.IConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<BenefitManagementContext>(opt =>
-    opt.UseInMemoryDatabase("BenefitManagement"));
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("BenefitManagementDB")));
+    
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -22,6 +23,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

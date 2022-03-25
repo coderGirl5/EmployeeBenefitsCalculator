@@ -11,15 +11,15 @@ using EmployeeBenefitAPI.Core.IConfiguration;
 
 namespace EmployeeBenefitAPI.Controllers
 {
-    [Route("api/employee")]
+    [Route("api/dependent")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class DependentController : ControllerBase
     {
-        private readonly ILogger<EmployeeController> _logger;
+        private readonly ILogger<DependentController> _logger;
         private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeController(
-            ILogger<EmployeeController> logger,
+        public DependentController(
+            ILogger<DependentController> logger,
             IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -29,55 +29,53 @@ namespace EmployeeBenefitAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var employees = await _unitOfWork.Employees.All();
-            return Ok(employees);
+            var dependents = await _unitOfWork.Dependents.All();
+            return Ok(dependents);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEmployee(Guid id)
+        public async Task<ActionResult<Dependent>> GetDependent(Guid id)
         {
-           var employee = await _unitOfWork.Employees.GetById(id);
+            var dependent = await _unitOfWork.Dependents.GetById(id);
 
-          if(employee == null)
+          if(dependent == null)
               return NotFound();
 
-          return Ok(employee);
+          return Ok(dependent);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(Guid id, Employee employee)
+        public async Task<IActionResult> PutDependent(Guid id, Dependent dependent)
         {
-            if(id != employee.Id)
+            if(id != dependent.Id)
               return BadRequest();
 
-          await _unitOfWork.Employees.Upsert(employee);
+          await _unitOfWork.Dependents.Upsert(dependent);
           await _unitOfWork.CompleteAsync();
 
           return NoContent();
         }
 
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Dependent>> PostDependent(Dependent dependent)
         {
-          
-              employee.Id = Guid.NewGuid();
+             dependent.Id = Guid.NewGuid();
 
-              await _unitOfWork.Employees.Add(employee);
+              await _unitOfWork.Dependents.Add(dependent);
               await _unitOfWork.CompleteAsync();
 
-              return CreatedAtAction("GetEmployee", new {employee.Id}, employee);
-          
+              return CreatedAtAction("GetDependent", new {dependent.Id}, dependent);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(Guid id)
+        public async Task<IActionResult> DeleteDependent(Guid id)
         {
-            var item = await _unitOfWork.Employees.GetById(id);
+            var item = await _unitOfWork.Dependents.GetById(id);
 
             if(item == null)
                 return BadRequest();
 
-            await _unitOfWork.Employees.Delete(id);
+            await _unitOfWork.Dependents.Delete(id);
             await _unitOfWork.CompleteAsync();
 
             return Ok(item);
