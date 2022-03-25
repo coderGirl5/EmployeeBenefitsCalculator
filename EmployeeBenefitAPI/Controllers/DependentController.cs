@@ -59,12 +59,18 @@ namespace EmployeeBenefitAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Dependent>> PostDependent(Dependent dependent)
         {
-             dependent.Id = Guid.NewGuid();
+            dependent.Id = Guid.NewGuid();
+            //make sure the associated employee id is valid
+            var employee = await _unitOfWork.Employees.GetById(dependent.EmployeeId);
+            if(employee==null)
+            {
+                return BadRequest();
+            }
+            dependent.Employee=employee;
+            await _unitOfWork.Dependents.Add(dependent);
+            await _unitOfWork.CompleteAsync();
 
-              await _unitOfWork.Dependents.Add(dependent);
-              await _unitOfWork.CompleteAsync();
-
-              return CreatedAtAction("GetDependent", new {dependent.Id}, dependent);
+            return CreatedAtAction("GetDependent", new {dependent.Id}, dependent);
         }
 
         [HttpDelete("{id}")]

@@ -4,10 +4,8 @@ namespace EmployeeBenefitAPI.Models
     {
         public Guid Id { get; set; }
         public bool IsActive { get; set; }
-
         public decimal? BasePay { get; set; }
 
-        
         BenefitCalculator benefitCalculator = new BenefitCalculator();
 
         public Employee()
